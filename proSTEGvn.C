@@ -27,9 +27,9 @@ void proSTEGvn()
   //simple toy event generator
   TFile f("steg_100events_test.root", "RECREATE","ROOT file with histograms & tree");
   TTree *tree = new TTree("tree","Event tree with a few branches");
-  tree->Branch("npg", &b_npg, "npg/I");   // # of particles;
+  //tree->Branch("npg", &b_npg, "npg/I");   // # of particles;
+  tree->Branch("n", &b_n, "n/I");          // same as npg, # of particles;
   tree->Branch("phirg", &b_phirg, "phirg/F");  // RP angle;
-  tree->Branch("n", &b_n, "n/I");          // same as npg;
   tree->Branch("ptg", &b_ptg, "ptg[n]/F");  // ;
   tree->Branch("etag", &b_etag, "etag[n]/F");
   tree->Branch("phig", &b_phig, "phig[n]/F");
