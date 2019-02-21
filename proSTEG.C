@@ -24,7 +24,7 @@ void proSTEG()
   double RMSMult=0;
 
   //simple toy event generator
-  TFile f("steg_output_events1k.root", "RECREATE","ROOT file with histograms & tree");
+  TFile f("steg_output_events.root", "RECREATE","ROOT file with histograms & tree");
   TTree *tree = new TTree("tree","Event tree with a few branches");
   tree->Branch("n", &b_n, "n/I");          // number of particles
   tree->Branch("ptg", &b_ptg, "ptg[n]/F");  // pt, transverse momentum
