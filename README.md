@@ -5,7 +5,7 @@
 ## Running the code:
 
 ```
-[tuos@gw345 STEG]$ root -l proSTEGvn.C 
+[tuos@gw345 STEG]$ root -l proSTEG.C 
 root [0] 
 Processing proSTEGvn.C...
 0 events processed
