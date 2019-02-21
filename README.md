@@ -20,3 +20,20 @@ THE END
 root [1] .q
 ```
 
+## Read the produced tree and make a histogram for the pT distribution of the produced particles
+
+```
+[tuos@gw346 STEG]$ root -l eventAnalysis.C 
+root [0] 
+Processing eventAnalysis.C...
+Have run 0 of the total 100 events; 
+Have run 20 of the total 100 events; 
+Have run 40 of the total 100 events; 
+Have run 60 of the total 100 events; 
+Have run 80 of the total 100 events; 
+Info in <TCanvas::MakeDefCanvas>:  created default TCanvas with name c1
+root [1] .q
+```
+
+
+
