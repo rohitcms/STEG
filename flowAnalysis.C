@@ -46,7 +46,7 @@ void flowAnalysis(){
      TChain t1("t1");
      //t1.Add("./steg_output_events.root/tree");
      //t1.Add("./steg_output_flow.root/tree");
-     t1.Add("../../../../PbPb2015/Flow/steg/nonFlow/hin16xxx/v01_m300e20k/vndata_20kevents_test.root/tree");
+     t1.Add("/scratch/tuos/PbPb2015/Flow/steg/nonFlow/hin16xxx/v01_m300e20k/vndata_20kevents_test.root/tree");
      t1.SetBranchAddress("n", &nParticle);
      t1.SetBranchAddress("ptg", &pt);
      t1.SetBranchAddress("etag", &eta);

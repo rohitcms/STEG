@@ -80,6 +80,7 @@ void v2_plot() {
 
 
   c1->Print("eventplane_v2.png");
+  c1->Print("eventplane_v2.pdf");
 
 }
 
