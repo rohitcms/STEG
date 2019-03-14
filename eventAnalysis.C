@@ -21,7 +21,7 @@ void eventAnalysis(){
      Float_t eta[20000];
      TH1D *histPt = new TH1D("histPt", "histPt", 200,0,10);
 
-     //TH2D *hist2DV2yDiffVsV2xDiff = new TH2D("hist2DV2yDiffVsV2xDiff","hist2DV2yDiffVsV2xDiff", 200, -0.5,0.5, 200,-0.5,0.5);
+     TH2D *hist2DPtVsEta = new TH2D("hist2DPtVsEta","2D histogram of pT vs eta", 200, -2.4,2.4, 200,0.0,10);
 
      TChain t1("t1");
      t1.Add("./steg_output_events.root/tree");
@@ -40,13 +40,14 @@ void eventAnalysis(){
        for(iParticle=0; iParticle<nParticle; iParticle++){
            //cout<<"evtID = "<<ne<<",  particlesPt = "<<pt[iParticle]<<",  particlePhi = "<<phi[iParticle]<<endl;
            histPt->Fill(pt[iParticle]);
+           hist2DPtVsEta->Fill(eta[iParticle], pt[iParticle]);
        }
 
 
       } // end of event loop
 
       histPt->Draw();
-
+      //hist2DPtVsEta->Draw("colz");
 }
 
 
