@@ -51,6 +51,7 @@ void proSTEGv2()
   for(int i=0; i<tot_num; i++){ 
     
     Psi = rnd->Uniform(0.0,PI2);
+    //Psi = 0;
     b_phirg = Psi;
 
     b_npg = rnd->Gaus(MeanMult,RMSMult); 

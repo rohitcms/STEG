@@ -45,7 +45,8 @@ void flowAnalysis(){
 
      TChain t1("t1");
      //t1.Add("./steg_output_events.root/tree");
-     t1.Add("./steg_output_flow.root/tree");
+     //t1.Add("./steg_output_flow.root/tree");
+     t1.Add("../../../../PbPb2015/Flow/steg/nonFlow/hin16xxx/v01_m300e20k/vndata_20kevents_test.root/tree");
      t1.SetBranchAddress("n", &nParticle);
      t1.SetBranchAddress("ptg", &pt);
      t1.SetBranchAddress("etag", &eta);
@@ -53,9 +54,10 @@ void flowAnalysis(){
 
      nEvt=t1.GetEntries();
      //nEvtProcess=50;
+     // first event loop for estimatig the event plane resolution
      for(long ne=0; ne<nEvt; ne++)
      {
-       if(ne%20==0)  cout<<"Have run "<<ne<<" of the total "<<nEvt<<" events; "<<endl;
+       if(ne%200==0)  cout<<"Have run "<<ne<<" of the total "<<nEvt<<" events; "<<endl;
        t1.GetEntry(ne);
        
        histQSinPlus->Reset();
@@ -82,37 +84,70 @@ void flowAnalysis(){
        eventPlaneMinus = 1.0/2*atan2(histQSinMinus->GetMean(), histQCosMinus->GetMean()); // EP in (-pi/2, pi/2);
        histEventPlaneRes->Fill(cos(2*(eventPlanePlus - eventPlaneMinus)));
 
-       // calculating v2
-       for(iParticle=0; iParticle<nParticle; iParticle++){
-         if(eta[iParticle]<-1.0||eta[iParticle]>1.0) continue; 
-         //if(phi[iParticle]>3.141592653589793) phi[iParticle]=phi[iParticle]-2*3.141592653589793; 
-         if(pt[iParticle]<0.2||pt[iParticle]>10.0) continue; 
+      } // end of the first event loop
+      cout<<"Event Plane resolution = "<<sqrt(histEventPlaneRes->GetMean())<<endl;
 
-         int ptBin=-1;  
+      //histPt->Draw();
+      //hist2DPtVsEta->Draw("colz");
+
+     // starting the second event loop
+     for(long ne=0; ne<nEvt; ne++)
+     {
+       if(ne%200==0)  cout<<"Have run "<<ne<<" of the total "<<nEvt<<" events; "<<endl;
+       t1.GetEntry(ne);
+
+       histQSinPlus->Reset();
+       histQSinMinus->Reset();
+       histQCosPlus->Reset();
+       histQCosMinus->Reset();
+
+       // estimating event plane angle
+       for(iParticle=0; iParticle<nParticle; iParticle++){
+
+           if(eta[iParticle]>1.0){
+             histQSinPlus->Fill(sin(2*phi[iParticle]));
+             histQCosPlus->Fill(cos(2*phi[iParticle]));
+           }
+           if(eta[iParticle]<-1.0){
+             histQSinMinus->Fill(sin(2*phi[iParticle]));
+             histQCosMinus->Fill(cos(2*phi[iParticle]));
+           }
+        }
+       eventPlanePlus = 1.0/2*atan2(histQSinPlus->GetMean(), histQCosPlus->GetMean()); // EP in (-pi/2, pi/2);
+       eventPlaneMinus = 1.0/2*atan2(histQSinMinus->GetMean(), histQCosMinus->GetMean()); // EP in (-pi/2, pi/2);        
+       // calculating v2 for each event
+       for(iParticle=0; iParticle<nParticle; iParticle++){
+         if(eta[iParticle]<-1.0||eta[iParticle]>1.0) continue;
+         //if(phi[iParticle]>3.141592653589793) phi[iParticle]=phi[iParticle]-2*3.141592653589793; 
+         if(pt[iParticle]<0.2||pt[iParticle]>10.0) continue;
+
+         int ptBin=-1;
          for(int ipt=0;ipt<NB_SLICE_PT;ipt++){
            if((pt[iParticle]>minPtCut[ipt]&&pt[iParticle]<=maxPtCut[ipt])){
              ptBin=ipt;
            }
          }
-         
+
          if(eta[iParticle]>0){
            histV2Obs[ptBin]->Fill(cos(2*(phi[iParticle] - eventPlaneMinus)));
-           histV2Corrected[ptBin]->Fill(cos(2*(phi[iParticle] - eventPlaneMinus)))/sqrt(fabs(histEventPlaneRes->GetMean()));
+           histV2Corrected[ptBin]->Fill(cos(2*(phi[iParticle] - eventPlaneMinus)));
          }
          if(eta[iParticle]<0){
            histV2Obs[ptBin]->Fill(cos(2*(phi[iParticle] - eventPlanePlus)));
-           histV2Corrected[ptBin]->Fill(cos(2*(phi[iParticle] - eventPlanePlus)))/sqrt(fabs(histEventPlaneRes->GetMean()));
+           histV2Corrected[ptBin]->Fill(cos(2*(phi[iParticle] - eventPlanePlus)));
          }
-         
-       } // end of the second particle loop
 
-      } // end of event loop
+       } // end of the particle loop
 
-      //histPt->Draw();
-      //hist2DPtVsEta->Draw("colz");
- 
+      } // end of the second event loop
+
+       
+      ofstream output_v2;
+      output_v2.open("output_v2.txt");
       for(int i=0; i<NB_SLICE_PT; i++){     
-        cout<<(minPtCut[i]+maxPtCut[i])/2<<"   "<<histV2Corrected[i]->GetMean()<<"   "<<histV2Corrected[i]->GetMeanError()<<endl;
+
+        cout<<(minPtCut[i]+maxPtCut[i])/2<<"   "<<histV2Corrected[i]->GetMean()/sqrt(fabs(histEventPlaneRes->GetMean()))<<"   "<<histV2Corrected[i]->GetMeanError()<<endl;
+        output_v2<<(minPtCut[i]+maxPtCut[i])/2<<"   "<<histV2Corrected[i]->GetMean()/sqrt(fabs(histEventPlaneRes->GetMean()))<<"   "<<histV2Corrected[i]->GetMeanError()<<endl;
       } 
 
 }
